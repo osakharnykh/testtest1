@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Bacterialysis</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.0/sketchy/bootstrap.min.css">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</head>
+
+<body>
+<div class="container">
+<div class='row'>
+<div class="col-md-4">
+<h2>Bacterias Visualization</h2>
+    <div class="form-group">
+        <select class="custom-select" id='selector_' onchange="getData(this.value)">
+          <option selected="#bact">Bacteria ID</option>
+        </select>
+      </div>
+      <div class="card border-danger mb-3" style="max-width: 20rem;">
+          <div class="card-header">Sample Data</div>
+          <div class="card-body">
+            <p class="card-text" id='samplecard'></p>
+          </div>
+        </div>
+</div>
+<div class="col-md-7">
+  <br>
+<div class="alert alert-dismissible alert-secondary">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    In January 2011, Rob Dunn Lab launched Belly Button Biodiversity to investigate the microbes inhabiting the navels and the factors that might influence their microscopic life, inspiring conversations about the beneficial roles microbes play in our daily lives.<br>
+    More information on the project can be found at: <br>
+    <button type="button" class="btn btn-warning"><a href='http://robdunnlab.com/projects/belly-button-biodiversity/'>Biodiversity Web Link</a></button>
+  </div>
+</div>
+</div>
+
+
+<!--PIE CHART / BUBBLE CHART-->  
+<div class='row'>
+<div class="col-md-5">
+<div id="pieplot"></div></div>
+<div class="col-md-7">
+<div id="bubbleplot"></div></div>
+</div>
+
+<!--SCRIPT-->
+<script src="http://d3js.org/d3.v3.js"></script>
+    <script>
+    var url='/names';
+    var namedata=[];
+    //Pulling the data from dropdown selection
+    function getData(dataset){
+      //console.log(dataset);
+      //Sample data
+      sample_sample = JSON.parse(getJSON('/metadata/' + dataset));
+      //console.log(sample_sample);
+      var select_samp = document.getElementById("samplecard");
+      var text_samp = JSON.stringify(sample_sample);
+      var text_fin= text_samp.replace(/,/g, "\n");
+      select_samp.innerText=text_fin;
+
+      top_samples = JSON.parse(getJSON('/samples/' + dataset));
+      desc_all = JSON.parse(getJSON('/otu'));
+      labels = top_samples.otu_ids.slice(0, 10);
+      values = top_samples.sample_values.slice(0, 10);
+      var desc = [];
+      for (var i = 0; i < labels.length; i++)
+        desc.push(desc_all[labels[i]]);
+      //console.log(desc);
+      //console.log(labels);
+      //console.log(values);
+      var update_data = {labels: [labels], values: [values], hovertext: [desc]};
+      Plotly.restyle("pieplot", update_data);
+      //Bubble chart update
+      colors=['rgb(93,164,214)'];
+      opacities=[1];
+      sizes=[];
+      for (var i = 0; i < values.length; i++)
+        sizes.push(values[i]);
+      //console.log(sizes);
+      var bub_upd_data = {x: [labels], y: [values], marker: [{size: sizes}]};
+      Plotly.restyle("bubbleplot", bub_upd_data);//, layout_upd);
+    }
+    //Getting the names from app route
+    function getJSON(url) {
+        var resp ;
+        var xmlHttp ;
+        resp  = '' ;
+        xmlHttp = new XMLHttpRequest();
+        if(xmlHttp != null)
+        {
+            xmlHttp.open( "GET", url, false );
+            xmlHttp.send( null );
+            resp = xmlHttp.responseText;
+        }
+        return resp ;
+    }
+    namedata = JSON.parse(getJSON(url));
+    //console.log(namedata);
+
+    //Create dropdown 
+    var select = document.getElementById("selector_");
+    for (var i = 0; i < namedata.length; i++)
+      select.appendChild(new Option(namedata[i], namedata[i], false, false));
+
+    //Draw pie plot
+    var data = [{labels:[], values:[], type:"pie"}];
+    Plotly.newPlot("pieplot", data); 
+
+    //Bubble plot
+    var bub_data = [{x: [1,2,3], y: [2,3,2], marker: {size: [10,100,30]}, 
+                    mode: "markers"}];
+    var layout = {yaxis: {range: [0,300]}};
+    Plotly.newPlot("bubbleplot", bub_data, layout);
+
+
+    </script>
+
+
+</div>
+</body>
+
+</html>
