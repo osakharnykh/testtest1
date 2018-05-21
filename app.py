@@ -12,23 +12,6 @@ from flask import (
 
 app=Flask(__name__)
 
-#SQLite
-from flask_sqlalchemy import SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '') or "sqlite:///db.sqlite"
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '')
-db = SQLAlchemy(app)
-session = db.session
-
-
-#app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///DataSets/belly_button_biodiversity.sqlite"
-#db = SQLAlchemy(app)
-
-#class Bact(db.Model):
-#    __tablename__ = 'bacteria'
-#
-#   sampleid=db.Column(db.Integer,primary_key=True)
-#   samplename=db.Column(db.String)
-
 metadata_=pd.read_csv('Instructions/DataSets/Belly_Button_Biodiversity_Metadata.csv')
 otu_=pd.read_csv('Instructions/DataSets/belly_button_biodiversity_otu_id.csv')
 samples_=pd.read_csv('Instructions/DataSets/belly_button_biodiversity_samples.csv')
