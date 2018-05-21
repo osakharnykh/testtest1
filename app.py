@@ -12,9 +12,9 @@ from flask import (
 
 app=Flask(__name__)
 
-metadata_=pd.read_csv('Instructions/DataSets/Belly_Button_Biodiversity_Metadata.csv')
-otu_=pd.read_csv('Instructions/DataSets/belly_button_biodiversity_otu_id.csv')
-samples_=pd.read_csv('Instructions/DataSets/belly_button_biodiversity_samples.csv')
+metadata_=pd.read_csv('Belly_Button_Biodiversity_Metadata.csv')
+otu_=pd.read_csv('belly_button_biodiversity_otu_id.csv')
+samples_=pd.read_csv('belly_button_biodiversity_samples.csv')
 
 #Routes
 @app.route('/')
